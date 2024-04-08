@@ -1,0 +1,163 @@
+﻿<UserControl xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"  xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:System="clr-namespace:System;assembly=mscorlib"
+          
+             xmlns:forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+
+             x:Class="ReciveShipmentWpf.WpfShipmentCtl" 
+         
+        Background="Lavender"      d:DesignHeight="300" mc:Ignorable="d" MinWidth="888" Width="Auto" FlowDirection="RightToLeft">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="Width" Value="111"></Setter>
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            <Setter Property="Margin" Value="3"></Setter>
+        </Style>
+        <Style   TargetType="Button">
+            <Setter Property="Margin" Value="10"></Setter>
+            <Setter Property="MaxWidth" Value="126"></Setter>
+
+            <Setter Property="FontSize" Value="20"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+
+        </Style>
+        <Style TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="xctk:IntegerUpDown">
+            <Setter Property="TextAlignment" Value="Center"></Setter>
+        </Style>
+        <Style x:Key="DataGridContentCellCentering" TargetType="{x:Type DataGridCell}">
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" ></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="lblHeader" FontSize="22" FontWeight="Bold" 
+                   TextAlignment="Center" Text="קבלת הזמנות" Grid.Row="0" Width="Auto"/>
+
+        <DataGrid  x:Name="GridShipments"  Grid.Row="1" AutoGenerateColumns="False" LoadingRowDetails="GridShipments_OnLoadingRowDetails"
+                   SelectionMode="Single" SelectionUnit="Cell" CanUserAddRows="True" 
+                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" 
+                   Margin="12" FontWeight="Bold"    FontSize="22" ColumnWidth="*"  
+        ItemsSource="{Binding shipmentslist,Mode=TwoWay,   UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}"   
+                  LoadingRow="GridShipments_OnLoadingRow"
+                   InitializingNewItem="GridShipments_InitializingNewItem"
+                   Loaded="GridShipments_OnLoaded"                 
+                   PreparingCellForEdit="GridShipments_PreparingCellForEdit"
+                   RequestBringIntoView="GridShipments_RequestBringIntoView" 
+                 >
+            
+            <DataGrid.Columns>
+
+
+                <DataGridTextColumn Header="מספר ת.משלוח" Binding="{Binding U_CONTAINER_USER.U_RECEIVE_NUMBER}"/>
+                <DataGridTemplateColumn Header="גורם שולח" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox     IsEditable="True"  Width="Auto" Height="Auto"  
+                                        StaysOpenOnEdit="True"                                      
+                                          SelectedValuePath="U_CLINIC_ID" 
+                                          DisplayMemberPath="NAME"         SelectedValue="{Binding U_CONTAINER_USER.U_CLINIC, UpdateSourceTrigger=PropertyChanged}"
+                                          ItemsSource="{Binding Path=Clinics, RelativeSource={RelativeSource Mode=FindAncestor,   AncestorType={x:Type UserControl}}}">
+                                                                          
+                                <ComboBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ComboBox.ItemsPanel>
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+
+
+                <DataGridTemplateColumn Header="נשלח בתאריך">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <DatePicker Text="{Binding U_CONTAINER_USER.U_SEND_ON}"  SelectedDateFormat="Short"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding U_CONTAINER_USER.U_SEND_ON}" SelectedDateFormat="Short"  />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+
+
+                <DataGridTemplateColumn Header="מספר הפניות" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <xctk:IntegerUpDown Value="{Binding U_CONTAINER_USER.U_NUMBER_OF_ORDERS}" Minimum="1"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="מספר צנצנות" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <xctk:IntegerUpDown Value="{Binding U_CONTAINER_USER.U_NUMBER_OF_SAMPLES}" Minimum="1"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+      
+                <DataGridTextColumn Header="הערות" Binding="{Binding DESCRIPTION}"/>
+
+
+                <DataGridTextColumn Header="מספר קבלה" Binding="{Binding NAME}" IsReadOnly="True"/>
+
+
+
+
+                <DataGridTemplateColumn Width="50">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Click="Print_Click"  Width="30" Height="30">
+                                <StackPanel >
+                                    <Image  Source="C:\Program Files (x86)\Thermo\Nautilus\Resource\workflow_report.ico" />
+
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+
+
+
+
+
+
+
+
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+        <StackPanel Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <TextBlock x:Name="lblOrders" Text="a" />
+            <TextBlock x:Name="lblSamples" Text="b"  Grid.Row="1"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Click="btnSave_Click" Grid.Column="1"  Content="אישור" Width="128" />
+            <Button Click="btnExit_Click" Grid.Column="1"  Content="יציאה" Width="128" />
+        </StackPanel>
+    </Grid>
+
+</UserControl>
